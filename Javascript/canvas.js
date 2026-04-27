@@ -39,7 +39,7 @@ function component(width, height, color, x, y) {
   this.y = y;
   this.speedX = 0;
   this.speedY = 0;
-  this.gravity = 0.05;
+  this.gravity = 0.5;
   this.gravitySpeed = 0;
 
   this.update = function () {
@@ -86,7 +86,7 @@ document.addEventListener("keydown", (e) => {
       gameStarted = true;
     }
     if (!gameOver) {
-      player.gravitySpeed = -6;
+      player.gravitySpeed = -10; // Justera hoppstyrkan
     } else {
       // Starta om spelet
       resetGame();
