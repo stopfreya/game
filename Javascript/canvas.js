@@ -10,6 +10,14 @@ canvas.style.height = "100%";
 const bgImage = new Image();
 bgImage.src = "../Img/blue.png";
 
+// Ladda spelarbild
+const playerImage = new Image();
+playerImage.src = "../Img/Jet.png";
+
+// Ladda meteor-bild
+const meteorImage = new Image();
+meteorImage.src = "../Img/standin.png";
+
 let x1 = 0;
 let x2 = canvas.width;
 const speed = 2;
@@ -41,10 +49,15 @@ function component(width, height, color, x, y) {
   this.speedY = 0;
   this.gravity = 0.5;
   this.gravitySpeed = 0;
+  this.image = null;
 
   this.update = function () {
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    if (this.image && this.image.complete && this.image.naturalHeight !== 0) {
+      ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    } else {
+      ctx.fillStyle = this.color;
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
   };
 
   this.newPos = function () {
@@ -61,17 +74,18 @@ function component(width, height, color, x, y) {
     }
   };
 }
-
 // Spelarens rymdfarkost
-let player = new component(30, 20, "#00ff00", 100, canvas.height / 2);
+let player = new component(120,100, "#00ff00", 100, canvas.height / 2);
+player.image = playerImage;
 
 // Meteoriter
 let meteors = [];
 const meteorSpeed = 4;
 
 function spawnMeteor() {
-  const size = 20 + Math.random() * 30;
+  const size = 200 + Math.random() * 30;
   const meteor = new component(size, size, "#ff6600", canvas.width, Math.random() * (canvas.height - size));
+  meteor.image = meteorImage;
   meteor.speedX = -meteorSpeed;
   meteors.push(meteor);
 }
