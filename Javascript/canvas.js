@@ -90,7 +90,7 @@ player.hitboxOffsetY = 25;  // Flytta hitbox 25px ner
 
 // Meteoriter
 let meteors = [];
-const meteorSpeed = 4;
+const meteorSpeed = 10;
 
 function spawnMeteor() {
   const size = 100 + Math.random() * 100; // Minst 100, max 200
@@ -98,10 +98,10 @@ function spawnMeteor() {
   meteor.image = meteorImage;
   
   // Hitbox skalas med meteorstorleken (80% av bildstorlek)
-  meteor.hitboxWidth = size * 0.8;
-  meteor.hitboxHeight = size * 0.8;
-  meteor.hitboxOffsetX = size * 0.1; // Centrera (10% offset)
-  meteor.hitboxOffsetY = size * 0.1;
+  meteor.hitboxWidth = size * 0.3;
+  meteor.hitboxHeight = size * 0.3;
+  meteor.hitboxOffsetX = size * 0.25; // Centrera (10% offset)
+  meteor.hitboxOffsetY = size * 0.3;
   
   meteor.speedX = -meteorSpeed;
   meteors.push(meteor);
@@ -187,7 +187,7 @@ function draw() {
 
   // Uppdatera och rita meteoriter
   meteorTimer++;
-  if (meteorTimer > 20) { // Ny meteor var 100:e bildruta (ökad intervall)
+  if (meteorTimer > 10) { // Ny meteor var 100:e bildruta (ökad intervall)
     spawnMeteor();
     meteorTimer = 0;
   }
@@ -251,3 +251,5 @@ function gameLoop() {
 bgImage.onload = function() {
   gameLoop();
 };
+
+//347 är highscoren
