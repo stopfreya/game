@@ -54,6 +54,8 @@ function component(width, height, color, x, y) {
   // Separat hitbox (kan justeras oberoende av bildstorlek)
   this.hitboxWidth = width;
   this.hitboxHeight = height;
+  this.hitboxOffsetX = 0;  // Förskjut hitbox horisontellt
+  this.hitboxOffsetY = 0;  // Förskjut hitbox vertikalt
 
   this.update = function () {
     if (this.image && this.image.complete && this.image.naturalHeight !== 0) {
@@ -81,8 +83,10 @@ function component(width, height, color, x, y) {
 // Spelarens rymdfarkost
 let player = new component(120, 100, "#00ff00", 100, canvas.height / 2);
 player.image = playerImage;
-player.hitboxWidth = 60;  // Matchar nästan hela bilden
+player.hitboxWidth = 60;
 player.hitboxHeight = 50;
+player.hitboxOffsetX = 30;  // Flytta hitbox 30px åt höger
+player.hitboxOffsetY = 25;  // Flytta hitbox 25px ner
 
 // Meteoriter
 let meteors = [];
@@ -92,8 +96,13 @@ function spawnMeteor() {
   const size = 100 + Math.random() * 100; // Minst 100, max 200
   const meteor = new component(size, size, "#ff6600", canvas.width, Math.random() * (canvas.height - size));
   meteor.image = meteorImage;
-  meteor.hitboxWidth = size - 1;  // Något mindre än bilden
-  meteor.hitboxHeight = size - 1;
+  
+  // Hitbox skalas med meteorstorleken (80% av bildstorlek)
+  meteor.hitboxWidth = size * 0.8;
+  meteor.hitboxHeight = size * 0.8;
+  meteor.hitboxOffsetX = size * 0.1; // Centrera (10% offset)
+  meteor.hitboxOffsetY = size * 0.1;
+  
   meteor.speedX = -meteorSpeed;
   meteors.push(meteor);
 }
@@ -130,19 +139,22 @@ const showHitboxes = true;
 // ============================================================
 
 function checkCollision(rect1, rect2) {
-  // Använd separat hitbox istället för bildstorlek
+  // Använd hitbox med offset
+  const x1 = rect1.x + (rect1.hitboxOffsetX || 0);
+  const y1 = rect1.y + (rect1.hitboxOffsetY || 0);
+  const x2 = rect2.x + (rect2.hitboxOffsetX || 0);
+  const y2 = rect2.y + (rect2.hitboxOffsetY || 0);
+  
   const w1 = rect1.hitboxWidth;
   const h1 = rect1.hitboxHeight;
   const w2 = rect2.hitboxWidth;
   const h2 = rect2.hitboxHeight;
   
-  const padding = 5;
-  
   return (
-    rect1.x + padding < rect2.x + w2 - padding &&
-    rect1.x + w1 - padding > rect2.x + padding &&
-    rect1.y + padding < rect2.y + h2 - padding &&
-    rect1.y + h1 - padding > rect2.y + padding
+    x1 < x2 + w2 &&
+    x1 + w1 > x2 &&
+    y1 < y2 + h2 &&
+    y1 + h1 > y2
   );
 }
 
@@ -205,11 +217,21 @@ function draw() {
   if (showHitboxes) {
     ctx.strokeStyle = "#00ff00";
     ctx.lineWidth = 2;
-    ctx.strokeRect(player.x, player.y, player.hitboxWidth, player.hitboxHeight);
+    ctx.strokeRect(
+      player.x + (player.hitboxOffsetX || 0), 
+      player.y + (player.hitboxOffsetY || 0), 
+      player.hitboxWidth, 
+      player.hitboxHeight
+    );
     
     for (let m of meteors) {
       ctx.strokeStyle = "#ff0000";
-      ctx.strokeRect(m.x, m.y, m.hitboxWidth, m.hitboxHeight);
+      ctx.strokeRect(
+        m.x + (m.hitboxOffsetX || 0), 
+        m.y + (m.hitboxOffsetY || 0), 
+        m.hitboxWidth, 
+        m.hitboxHeight
+      );
     }
   }
 
