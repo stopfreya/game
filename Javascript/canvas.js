@@ -50,6 +50,10 @@ function component(width, height, color, x, y) {
   this.gravity = 0.5;
   this.gravitySpeed = 0;
   this.image = null;
+  
+  // Separat hitbox (kan justeras oberoende av bildstorlek)
+  this.hitboxWidth = width;
+  this.hitboxHeight = height;
 
   this.update = function () {
     if (this.image && this.image.complete && this.image.naturalHeight !== 0) {
@@ -75,17 +79,21 @@ function component(width, height, color, x, y) {
   };
 }
 // Spelarens rymdfarkost
-let player = new component(120,100, "#00ff00", 100, canvas.height / 2);
+let player = new component(120, 100, "#00ff00", 100, canvas.height / 2);
 player.image = playerImage;
+player.hitboxWidth = 60;  // Matchar nästan hela bilden
+player.hitboxHeight = 50;
 
 // Meteoriter
 let meteors = [];
 const meteorSpeed = 4;
 
 function spawnMeteor() {
-  const size = 200 + Math.random() * 30;
+  const size = 100 + Math.random() * 100; // Minst 100, max 200
   const meteor = new component(size, size, "#ff6600", canvas.width, Math.random() * (canvas.height - size));
   meteor.image = meteorImage;
+  meteor.hitboxWidth = size - 1;  // Något mindre än bilden
+  meteor.hitboxHeight = size - 1;
   meteor.speedX = -meteorSpeed;
   meteors.push(meteor);
 }
@@ -117,12 +125,24 @@ function resetGame() {
   gameStarted = true;
 }
 
+// === DEBUG: Visa hitboxes (sätt till false för att dölja) ===
+const showHitboxes = true;
+// ============================================================
+
 function checkCollision(rect1, rect2) {
+  // Använd separat hitbox istället för bildstorlek
+  const w1 = rect1.hitboxWidth;
+  const h1 = rect1.hitboxHeight;
+  const w2 = rect2.hitboxWidth;
+  const h2 = rect2.hitboxHeight;
+  
+  const padding = 5;
+  
   return (
-    rect1.x < rect2.x + rect2.width &&
-    rect1.x + rect1.width > rect2.x &&
-    rect1.y < rect2.y + rect2.height &&
-    rect1.y + rect1.height > rect2.y
+    rect1.x + padding < rect2.x + w2 - padding &&
+    rect1.x + w1 - padding > rect2.x + padding &&
+    rect1.y + padding < rect2.y + h2 - padding &&
+    rect1.y + h1 - padding > rect2.y + padding
   );
 }
 
@@ -180,6 +200,18 @@ function draw() {
   // Uppdatera och rita spelaren
   player.newPos();
   player.update();
+
+  // DEBUG: Rita hitboxar
+  if (showHitboxes) {
+    ctx.strokeStyle = "#00ff00";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(player.x, player.y, player.hitboxWidth, player.hitboxHeight);
+    
+    for (let m of meteors) {
+      ctx.strokeStyle = "#ff0000";
+      ctx.strokeRect(m.x, m.y, m.hitboxWidth, m.hitboxHeight);
+    }
+  }
 
   // Rita poäng
   ctx.fillStyle = "white";
