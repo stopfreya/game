@@ -187,7 +187,7 @@ function draw() {
 
   // Uppdatera och rita meteoriter
   meteorTimer++;
-  if (meteorTimer > 10) { // Ny meteor var 100:e bildruta (ökad intervall)
+  if (meteorTimer > 17) { // Ny meteor var 100:e bildruta (ökad intervall)
     spawnMeteor();
     meteorTimer = 0;
   }
