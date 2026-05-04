@@ -1,3 +1,5 @@
+// En generisk spelkomponent som kan ritas på canvas.
+// Används både för spelaren och meteoriter.
 class Component {
   constructor(width, height, color, x, y) {
     this.width = width;
@@ -11,6 +13,7 @@ class Component {
     this.gravitySpeed = 0;
     this.image = null;
 
+    // Hitbox för kollision, kan vara mindre än den visuella storleken.
     this.hitboxWidth = width;
     this.hitboxHeight = height;
     this.hitboxOffsetX = 0;
@@ -26,21 +29,34 @@ class Component {
     }
   }
 
+  updateFireMode() {
+    if (this.fireModeExpiry && Date.now() >= this.fireModeExpiry) {
+      this.image = this.normalImage || this.image;
+      this.fireModeExpiry = 0;
+    }
+  }
+
   newPos(canvas) {
+    this.updateFireMode();
+
     this.gravitySpeed += this.gravity;
     this.x += this.speedX;
     this.y += this.speedY + this.gravitySpeed;
 
+    let hitBottom = false;
     if (this.y + this.height > canvas.height) {
       this.y = canvas.height - this.height;
       this.gravitySpeed = 0;
+      hitBottom = true;
     }
     if (this.y < 0) {
       this.y = 0;
       this.gravitySpeed = 0;
     }
+    return hitBottom;
   }
 
+  // Returnerar hitbox-position och storlek för kollisionstest.
   getHitbox() {
     return {
       x: this.x + (this.hitboxOffsetX || 0),
