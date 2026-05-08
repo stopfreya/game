@@ -141,12 +141,9 @@ function draw() {
     }
   }
 
-  // Flytta spelaren och kontrollera om den träffar botten.
-  const hitBottom = player.newPos(canvas);
+  // Flytta spelaren.
+  player.newPos(canvas);
   player.update(ctx);
-  if (hitBottom) {
-    gameOver = true;
-  }
 
   // Rita hitboxes om debug-läget är aktiverat.
   if (showHitboxes) {
