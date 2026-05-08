@@ -31,10 +31,12 @@ function resetPlayer(canvas) {
 }
 
 // Byter spelarbilen till FireJet-bilden under en kort stund efter hopp.
-function setPlayerFireMode(duration = 1000) {
+function setPlayerFireMode(duration = 500) {
   if (!player) {
     return;
   }
-  player.image = player.fireImage;
-  player.fireModeExpiry = Date.now() + duration;
+  if (!player.fireModeExpiry || player.fireModeExpiry < Date.now()) {
+    player.image = player.fireImage;
+    player.fireModeExpiry = Date.now() + duration;
+  }
 }

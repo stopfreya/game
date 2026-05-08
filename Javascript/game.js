@@ -40,8 +40,8 @@ document.addEventListener("keydown", (e) => {
     }
     if (!gameOver) {
       if (player) {
-        player.gravitySpeed = -10;
-        setPlayerFireMode(1000); // Byt till FireJet i 1 sekund.
+        player.gravitySpeed = -10.5;
+        setPlayerFireMode(); // Byt till FireJet i 0.5 sekund.
       }
     } else {
       resetGame();
