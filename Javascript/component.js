@@ -46,8 +46,8 @@ class Component {
     let hitBottom = false;
     if (this.y + this.height > canvas.height) {
       this.y = canvas.height - this.height;
-      this.gravitySpeed = 0;
-      hitBottom = true;
+      this.gravitySpeed = -10;  // Studsa upp från botten
+      hitBottom = false;  // Inte game over, bara studsa
     }
     if (this.y < 0) {
       this.y = 0;
