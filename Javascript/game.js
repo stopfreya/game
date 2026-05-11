@@ -21,12 +21,14 @@ let score = 0;
 let gameOver = false;
 let gameStarted = false;
 let meteorTimer = 0;
+let projectileTimer = 0;
 const showHitboxes = true;
 
 // Starta om spelet till standardläge.
 function resetGame() {
   resetPlayer(canvas);
   resetMeteors();
+  resetProjectiles();
   score = 0;
   gameOver = false;
   gameStarted = true;
@@ -35,6 +37,7 @@ function resetGame() {
 // Tangentbordslyssnare för att hoppa eller starta om spelet.
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
+    e.preventDefault(); // Förhindra standardbeteende (t.ex. scrollning)
     if (!gameStarted) {
       gameStarted = true;
     }
@@ -78,6 +81,12 @@ function drawHitboxes() {
   for (const m of meteors) {
     const hitbox = m.getHitbox();
     ctx.strokeStyle = "#ff0000";
+    ctx.strokeRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+  }
+
+  for (const proj of projectiles) {
+    const hitbox = proj.getHitbox();
+    ctx.strokeStyle = "#ffff00"; // Gul för projektiler
     ctx.strokeRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
   }
 }
@@ -125,6 +134,13 @@ function draw() {
     meteorTimer = 0;
   }
 
+  // Skapa nya projektiler med jämna mellanrum.
+  projectileTimer++;
+  if (projectileTimer > 60) { // Var 60:e frame, justera för svårighet
+    spawnProjectile(canvas, player);
+    projectileTimer = 0;
+  }
+
   // Uppdatera och rita alla meteoriter.
   for (let i = meteors.length - 1; i >= 0; i--) {
     const m = meteors[i];
@@ -138,6 +154,21 @@ function draw() {
     if (m.x + m.width < 0) {
       meteors.splice(i, 1);
       score++;
+    }
+  }
+
+  // Uppdatera och rita alla projektiler.
+  for (let i = projectiles.length - 1; i >= 0; i--) {
+    const p = projectiles[i];
+    p.update(ctx);
+
+    if (checkCollision(player, p)) {
+      gameOver = true;
+    }
+
+    // Ta bort projektiler som gått utanför skärmen
+    if (p.x + p.width < 0 || p.x > canvas.width || p.y + p.height < 0 || p.y > canvas.height) {
+      projectiles.splice(i, 1);
     }
   }
 
