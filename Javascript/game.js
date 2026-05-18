@@ -12,6 +12,24 @@ canvas.style.height = "100%";
 const bgImage = new Image();
 bgImage.src = "../Img/blue.png";
 
+const jetpackSound = new Audio("Sound/Jetpack.mp3");
+jetpackSound.volume = 0.5;
+const deathSounds = [
+  new Audio("Sound/Deathsound1.mp3"),
+  new Audio("Sound/Deathsound2.mp3"),
+];
+
+function playJetpackSound() {
+  jetpackSound.currentTime = 0;
+  jetpackSound.play().catch(() => {});
+}
+
+function playDeathSound() {
+  const sound = deathSounds[Math.floor(Math.random() * deathSounds.length)];
+  sound.currentTime = 0;
+  sound.play().catch(() => {});
+}
+
 let x1 = 0;
 let x2 = canvas.width;
 const speed = 2;
@@ -45,6 +63,7 @@ document.addEventListener("keydown", (e) => {
       if (player) {
         player.gravitySpeed = -10.5;
         setPlayerFireMode(); // Byt till FireJet i 0.5 sekund.
+        playJetpackSound();
       }
     }
   } else if (e.code === "Enter" && gameOver) {
@@ -151,7 +170,10 @@ function draw() {
     m.update(ctx);
 
     if (checkCollision(player, m)) {
-      gameOver = true;
+      if (!gameOver) {
+        gameOver = true;
+        playDeathSound();
+      }
     }
 
     if (m.x + m.width < 0) {
@@ -165,7 +187,10 @@ function draw() {
     p.update(ctx);
 
     if (checkCollision(player, p)) {
-      gameOver = true;
+      if (!gameOver) {
+        gameOver = true;
+        playDeathSound();
+      }
     }
 
     // Ta bort projektiler som gått utanför skärmen
