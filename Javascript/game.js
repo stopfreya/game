@@ -34,7 +34,7 @@ function resetGame() {
   gameStarted = true;
 }
 
-// Tangentbordslyssnare för att hoppa eller starta om spelet.
+// Tangentbordslyssnare för att flyga eller starta om spelet.
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault(); // Förhindra standardbeteende (t.ex. scrollning)
@@ -46,9 +46,9 @@ document.addEventListener("keydown", (e) => {
         player.gravitySpeed = -10.5;
         setPlayerFireMode(); // Byt till FireJet i 0.5 sekund.
       }
-    } else {
-      resetGame();
     }
+  } else if (e.code === "Enter" && gameOver) {
+    resetGame();
   }
 });
 
@@ -110,7 +110,7 @@ function draw() {
     ctx.fillStyle = "white";
     ctx.font = "30px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("Tryck SPACE för att starta", canvas.width / 2, canvas.height / 2);
+    ctx.fillText("Tryck SPACE för att flyga", canvas.width / 2, canvas.height / 2);
     return;
   }
 
@@ -123,9 +123,12 @@ function draw() {
     ctx.fillStyle = "white";
     ctx.font = "20px Arial";
     ctx.fillText("Poäng: " + score, canvas.width / 2, canvas.height / 2 + 20);
-    ctx.fillText("Tryck SPACE för att spela igen", canvas.width / 2, canvas.height / 2 + 60);
+    ctx.fillText("Tryck ENTER för att spela igen", canvas.width / 2, canvas.height / 2 + 60);
     return;
   }
+
+  // Räkna score per frame istället för per undkomna fiender.
+  score++;
 
   // Skapa nya meteoriter med jämna mellanrum.
   meteorTimer++;
@@ -136,8 +139,8 @@ function draw() {
 
   // Skapa nya projektiler med jämna mellanrum.
   projectileTimer++;
-  if (projectileTimer > 60) { // Var 60:e frame, justera för svårighet
-    spawnProjectile(canvas, player);
+  if (projectileTimer > 100) { // Var 100:e frame, justera för svårighet
+    spawnProjectile(canvas, player, speed);
     projectileTimer = 0;
   }
 
@@ -153,7 +156,6 @@ function draw() {
 
     if (m.x + m.width < 0) {
       meteors.splice(i, 1);
-      score++;
     }
   }
 
