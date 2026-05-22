@@ -14,10 +14,7 @@ bgImage.src = "../Img/blue.png";
 
 const jetpackSound = new Audio("Sound/Jetpack.mp3");
 jetpackSound.volume = 0.5;
-const deathSounds = [
-  new Audio("Sound/Deathsound1.mp3"),
-  new Audio("Sound/Deathsound2.mp3"),
-];
+const deathSound = new Audio("Sound/Deathsound1.mp3");
 
 function playJetpackSound() {
   jetpackSound.currentTime = 0;
@@ -25,9 +22,8 @@ function playJetpackSound() {
 }
 
 function playDeathSound() {
-  const sound = deathSounds[Math.floor(Math.random() * deathSounds.length)];
-  sound.currentTime = 0;
-  sound.play().catch(() => {});
+  deathSound.currentTime = 0;
+  deathSound.play().catch(() => {});
 }
 
 let x1 = 0;
@@ -40,7 +36,7 @@ let gameOver = false;
 let gameStarted = false;
 let meteorTimer = 0;
 let projectileTimer = 0;
-const showHitboxes = true;
+const showHitboxes = false;
 
 // Starta om spelet till standardläge.
 function resetGame() {

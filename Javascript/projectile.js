@@ -74,7 +74,7 @@ aliensProjectileSprite.src = "Img/Aliens1.png";
 function spawnProjectile(canvas, player, bgSpeed) {
   const frameWidth = 32;
   const frameHeight = 22;
-  const frameCount = 8;
+  const frameCount = 6;
   const scale = 4; // Öka storleken för bättre synlighet
   const rows = 1; // Ändra till 2 om sprite sheet har flera rader
 
