@@ -2,19 +2,37 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
+let x1 = 0;
+let x2 = 0;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  x1 = 0;
+  x2 = canvas.width;
+}
+
 // Anpassa canvas till hela fönstrets storlek.
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-canvas.style.width = "100%";
-canvas.style.height = "100%";
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas);
+window.addEventListener("fullscreenchange", resizeCanvas);
+window.addEventListener("webkitfullscreenchange", resizeCanvas);
+window.addEventListener("mozfullscreenchange", resizeCanvas);
+window.addEventListener("MSFullscreenChange", resizeCanvas);
 
 // Bakgrundsbild som rullar i två delar.
 const bgImage = new Image();
-bgImage.src = "../Img/blue.png";
+bgImage.src = "Img/blue.png";
 
 const jetpackSound = new Audio("Sound/Jetpack.mp3");
 jetpackSound.volume = 0.5;
 const deathSound = new Audio("Sound/Deathsound1.mp3");
+
+const backgroundMusic = new Audio("Sound/Theme.mp3");
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.15;
+backgroundMusic.muted = false;
 
 function playJetpackSound() {
   jetpackSound.currentTime = 0;
@@ -26,8 +44,13 @@ function playDeathSound() {
   deathSound.play().catch(() => {});
 }
 
-let x1 = 0;
-let x2 = canvas.width;
+function updateBackgroundMusicVolume() {
+  const targetVolume = gameStarted ? 0.5 : 0.15;
+  if (Math.abs(backgroundMusic.volume - targetVolume) > 0.01) {
+    backgroundMusic.volume = targetVolume;
+  }
+}
+
 const speed = 2;
 
 // Spelstatus och räknare.
@@ -54,6 +77,9 @@ document.addEventListener("keydown", (e) => {
     e.preventDefault(); // Förhindra standardbeteende (t.ex. scrollning)
     if (!gameStarted) {
       gameStarted = true;
+    }
+    if (backgroundMusic.paused) {
+      backgroundMusic.play().catch(() => {});
     }
     if (!gameOver) {
       if (player) {
@@ -119,6 +145,8 @@ function draw() {
   // Rensa canvasen varje gång innan vi ritar om.
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBackground();
+
+  updateBackgroundMusicVolume();
 
   // Visa starttext innan spelet startar.
   if (!gameStarted) {
@@ -218,6 +246,7 @@ function gameLoop() {
 // Starta spelet när bakgrundsbilden är laddad.
 function startGame() {
   createPlayer(canvas);
+  backgroundMusic.play().catch(() => {});
   gameLoop();
 }
 
